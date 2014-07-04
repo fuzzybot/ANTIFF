@@ -1,0 +1,34 @@
+name: Anti-ForceField
+main: me.heirteir.antiff.Main
+version: 1.4
+author: Heirteir
+prefix: Anti-FF
+softdepend: [ProtocolLib]
+loadbefore: [ProtocolLib]
+description: Blocks Cheaters from using the cheat ForceField
+commands:
+  antiff:
+    description: Access to the anti-ff sub commands.
+permissions:
+  antiff.*:
+    description: Access to all commands of anti-ff.
+    children:
+      antiff.disable: true
+      antiff.reload: true
+      antiff.notify: true
+    default: OP
+  antiff.notify:
+    description: access to the staff inform.
+    default: OP
+  antiff.disable:
+    description: Access to disable the plugin.
+    default: OP
+  antiff.reload:
+    description: Reload the config file to update any configurations.
+    default: OP
+  antiff.bypass:
+    description: Bypass the check for anti-ff
+    default: false
+  antiff.shownpcs:
+    description: See the NPC that spawn on other players.
+    default: false
