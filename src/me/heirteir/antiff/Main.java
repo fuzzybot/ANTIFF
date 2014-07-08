@@ -11,13 +11,11 @@ import me.heirteir.antiff.config.CreateConfig;
 import me.heirteir.antiff.listeners.PlayerListener;
 import me.heirteir.antiff.updater.Updater;
 import me.heirteir.combat.CombatListener;
-import me.heirteir.lagreducer.AntiLag;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
 public class Main extends JavaPlugin implements Listener {
     public CombatListener combat;
@@ -33,7 +31,7 @@ public class Main extends JavaPlugin implements Listener {
 	CreateConfig.updateConfig(this);
 
 	// starting timers and checkers
-	plr = new PlayerListener(this);
+	plr = new PlayerListener(this, hasEssentials());
 	combat = new CombatListener(this);
 
 	// generating choices
@@ -52,10 +50,6 @@ public class Main extends JavaPlugin implements Listener {
 	    generateHackerFile();
 
 	this.getCommand("antiff").setExecutor(new Commands(this));
-
-	// start AntiLags
-	if (Configurations.useAntiLag())
-	    beginTickRateTimer(this);
     }
 
     public boolean checkDependencies() {
@@ -72,6 +66,13 @@ public class Main extends JavaPlugin implements Listener {
 	    logger.log(Level.SEVERE, "[===============================]");
 	    return false;
 	}
+	return true;
+    }
+
+    public boolean hasEssentials() {
+	PluginManager pm = Bukkit.getPluginManager();
+	if (pm.getPlugin("Essentials") == null || !pm.getPlugin("Essentials").isEnabled())
+	    return false;
 	return true;
     }
 
@@ -99,18 +100,5 @@ public class Main extends JavaPlugin implements Listener {
 	    new Updater(this, true).performUpdateCheck();
 	} else
 	    new Updater(this, false).performUpdateCheck();
-    }
-
-    public void beginTickRateTimer(final Main main) {
-	Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new AntiLag(), 100L, 1L);
-
-	new BukkitRunnable() {
-	    public void run() {
-		if (AntiLag.getTPS() < Configurations.getTPSCounter()) {
-		    plr.hider.close();
-		    plr.hider = new EntityHider(main, Policy.BLACKLIST);
-		}
-	    }
-	}.runTaskTimerAsynchronously(this, 120L, 20L);
     }
 }

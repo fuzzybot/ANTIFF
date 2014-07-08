@@ -13,20 +13,23 @@ import me.heirteir.antiff.npc.NPC;
 import me.heirteir.antiff.npc.NPCDamageEvent;
 import me.heirteir.antiff.npc.NPCFactory;
 import me.heirteir.antiff.npc.NPCProfile;
+import me.heirteir.antiff.npc.NameGen;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import com.earth2me.essentials.Essentials;
+
 public class PlayerListener implements Listener {
 
-    public static HashMap<String, Integer> hits = new HashMap<String, Integer>();
     public static HashMap<String, String> suspects = new HashMap<String, String>();
 
     List<String> cooldown = new ArrayList<String>();
@@ -37,39 +40,64 @@ public class PlayerListener implements Listener {
 
     PlayerListener plr = this;
 
-    public PlayerListener(Main main) {
+    Essentials ess;
+
+    boolean hasEssentials;
+
+    final NPCFactory np;
+
+    public PlayerListener(Main main, boolean hasEssentials) {
 	this.main = main;
 
 	// Register Hider
 	hider = new EntityHider(main, Policy.BLACKLIST);
 
 	beginTask(main);
+
+	this.hasEssentials = hasEssentials;
+
+	if (hasEssentials)
+	    ess = (Essentials) Bukkit.getPluginManager().getPlugin("Essentials");
+
+	np = new NPCFactory(main);
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler
     public void playerLeave(PlayerQuitEvent e) {
-	if (!hits.containsKey(e.getPlayer().getName()))
+	if (!suspects.containsKey(e.getPlayer().getName()))
 	    return;
-	hits.remove(e.getPlayer().getName());
+	suspects.remove(e.getPlayer().getName());
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler
+    public void playerLeave(PlayerKickEvent e) {
+	if (!suspects.containsKey(e.getPlayer().getName()))
+	    return;
+	suspects.remove(e.getPlayer().getName());
+    }
+
+    @EventHandler
     public void NPCDamage(NPCDamageEvent e) {
+	e.getNpc().getBukkitEntity().remove();
+
+	if (!e.getCause().equals(DamageCause.ENTITY_ATTACK))
+	    return;
+
 	if (!(e.getDamager() instanceof Player))
 	    return;
 
 	final Player playerhitter = (Player) e.getDamager();
 
-	e.setCancelled(true);
+	if (!suspects.containsKey(playerhitter.getName()))
+	    return;
+
+	if (!suspects.get(playerhitter.getName()).equals(e.getNpc().getBukkitEntity().getUniqueId().toString()))
+	    return;
 
 	if (Configurations.isKILL_PLAYER())
 	    playerhitter.setHealth(0.0);
 
-	hits.remove(playerhitter.getName());
 	suspects.remove(playerhitter.getName());
-	e.getNpc().getBukkitEntity().teleport(playerhitter.getLocation().subtract(0, 50, 0));
-	if (!e.getNpc().getBukkitEntity().isDead())
-	    e.getNpc().getBukkitEntity().remove();
 
 	if (Configurations.getREPORT().equalsIgnoreCase("all"))
 	    Bukkit.broadcastMessage(Configurations.getREPORT_MESSAGE());
@@ -87,7 +115,8 @@ public class PlayerListener implements Listener {
 		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
 	    }
 
-	    new UserEditor(playerhitter, main).updatePlayer();
+	    if (Configurations.isGENERATE_LOG())
+		new UserEditor(playerhitter, main).updatePlayer();
 	}
     }
 
@@ -100,8 +129,6 @@ public class PlayerListener implements Listener {
 		try {
 		    if (main.combat.time.isEmpty())
 			return;
-
-		    final NPCFactory np = new NPCFactory(main);
 
 		    ArrayList<String> temp = new ArrayList<String>();
 
@@ -126,11 +153,12 @@ public class PlayerListener implements Listener {
 				|| playerhitter.getLocation().getBlock().getType().equals(Material.VINE))
 			    return;
 
-			final NPC npc = np.spawnHumanNPC(playerhitter.getLocation().subtract(playerhitter.getEyeLocation().getDirection()).add(0, 3.5, 0), new NPCProfile(Configurations.getNPCNAME()));
+			String name = NameGen.newName();
+
+			final NPC npc = np.spawnHumanNPC(playerhitter.getLocation().subtract(playerhitter.getEyeLocation().getDirection().normalize()).add(0, 3, 0), new NPCProfile(name));
+
 			npc.setInvulnerable(false);
 			npc.setGravity(false);
-
-			cooldown.add(playerhitter.getName());
 
 			for (Player p : Bukkit.getOnlinePlayers()) {
 			    if (!p.getName().equalsIgnoreCase(playerhitter.getName())) {
@@ -138,6 +166,15 @@ public class PlayerListener implements Listener {
 				    hider.hideEntity(p, npc.getBukkitEntity());
 			    }
 			}
+
+			if (hasEssentials) {
+			    if (!ess.getUser(name).isNPC()) {
+				ess.getUser(name).setNPC(true);
+				ess.getUser(name).setPlayerListName("");
+			    }
+			}
+
+			cooldown.add(playerhitter.getName());
 
 			PlayerListener.suspects.put(playerhitter.getName(), npc.getBukkitEntity().getUniqueId().toString());
 
@@ -150,21 +187,13 @@ public class PlayerListener implements Listener {
 				    npc.getBukkitEntity().remove();
 				    PlayerListener.suspects.remove(playerhitter.getName());
 				}
-
-				if (!npc.getBukkitEntity().isDead()) {
-
-				    if (Configurations.blockSafety()) {
-					if (new Random().nextInt(2) == 1) {
-					    npc.getBukkitEntity().teleport(playerhitter.getLocation().add(playerhitter.getEyeLocation().getDirection()).add(0, 2, 0));
-					} else
-					    npc.getBukkitEntity().teleport(playerhitter.getLocation().subtract(playerhitter.getEyeLocation().getDirection()).add(1, 3.5, 1));
-				    } else
-					npc.getBukkitEntity().teleport(playerhitter.getLocation().subtract(playerhitter.getEyeLocation().getDirection()).add(1, 3.5, 1));
-				} else {
+				if (!npc.getBukkitEntity().isDead())
+				    npc.getBukkitEntity().teleport(playerhitter.getLocation().subtract(playerhitter.getEyeLocation().getDirection().normalize()).add(0, 3, 0));
+				else {
 				    this.cancel();
 				}
 			    }
-			}.runTaskTimerAsynchronously(main, 0, 0L);
+			}.runTaskTimer(main, 0, 0L);
 
 			Bukkit.getScheduler().scheduleSyncDelayedTask(main, new Runnable() {
 			    public void run() {
@@ -180,12 +209,24 @@ public class PlayerListener implements Listener {
 				    PlayerListener.suspects.remove(playerhitter.getName());
 				}
 			    }
-			}, Configurations.getNPC_LIFE());
+			}, 8);
 		    }
 		} catch (NullPointerException e) {
 		    return;
 		}
 	    }
 	}.runTaskTimer(main, 0L, Configurations.getSPAWN_RATE());
+    }
+
+    public void automaticProcess() {
+	new BukkitRunnable() {
+	    public void run() {
+		if (np.getNPCs().size() > 0) {
+		    for (NPC npc : np.getNPCs()) {
+			npc.getBukkitEntity().remove();
+		    }
+		}
+	    }
+	}.runTaskTimer(main, 0L, (long) (8 + Configurations.getSPAWN_RATE()));
     }
 }
