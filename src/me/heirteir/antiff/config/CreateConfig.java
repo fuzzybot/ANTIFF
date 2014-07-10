@@ -76,6 +76,14 @@ public class CreateConfig {
 	else
 	    newConfig.set("REPORT_MESSAGE", config.getString("REPORT_MESSAGE"), "Message sent when someone is cheating.");
 
+	String[] blocksafety = { "Whether or not to block safety mode", "safety mode is an option in hacked", "clients to make users only hit in FOV", "This is experimental so disable if",
+		"you see any strange behaviour." };
+
+	if (config.get("BLOCK_SAFETY") == null)
+	    newConfig.set("BLOCK_SAFETY", true, blocksafety);
+	else
+	    newConfig.set("BLOCK_SAFETY", config.getBoolean("BLOCK_SAFETY"), blocksafety);
+
 	String[] npcinfo = { "Timers for npc spawning and player cooldowns.", "All of the following values are in ticks.", "How often an npc will spawn on a player." };
 
 	if (config.get("playercooldown") == null)
@@ -83,10 +91,22 @@ public class CreateConfig {
 	else
 	    newConfig.set("playercooldown", config.getInt("playercooldown"), npcinfo);
 
+	if (config.get("npclife") == null)
+	    newConfig.set("npclife", 8, "How long the npc will be alive.");
+	else
+	    newConfig.set("npclife", config.getInt("npclife"), "How long the npc will be alive.");
+
 	if (config.get("spawnrate") == null)
 	    newConfig.set("spawnrate", 20, "How often to spawn the npc.");
 	else
 	    newConfig.set("spawnrate", config.getInt("spawnrate"), "How often to spawn the npc.");
+
+	String[] npcname = { "The name for the NPC make it difficult.", "DON'T MAKE IT THE NAME OF A PLAYER!" };
+
+	if (config.get("npcname") == null)
+	    newConfig.set("npcname", "10lI10IllI", npcname);
+	else
+	    newConfig.set("npcname", config.getString("npcname"), npcname);
 
 	if (config.get("combattime") == null)
 	    newConfig.set("combattime", 12, "How long to keep a player in the combat list. (in seconds)");
@@ -131,6 +151,18 @@ public class CreateConfig {
 	    newConfig.set("outofchances", outofchances, "Commands to execute when out of chances.");
 	} else
 	    newConfig.set("outofchances", config.getStringList("outofchances"), "Commands to execute when out of chances.");
+
+	String[] antilag = { "This is an experimental antilag local to the plugin.", "This will help if your server is", "getting a low TPS rate." };
+	if (config.get("use-antilag") == null)
+	    newConfig.set("use-antilag", true, antilag);
+	else
+	    newConfig.set("use-antilag", config.getBoolean("use-antilag"), antilag);
+
+	String[] antilagsetting = { "this option is when the antilag will run", "it is based on TPS, so if", "you choose 16.7 if you tps goes below", "16.7 it will execute the antilag", "MAXIMUM 20" };
+	if (config.get("tps-counter") == null)
+	    newConfig.set("tps-counter", 19.5, antilagsetting);
+	else
+	    newConfig.set("tps-counter", config.getInt("tps-counter"), antilagsetting);
 
 	// EVERYTHING BEFORE
 	String[] generatelog = { "Whether or not to generate a list of suspected cheaters.", "Must be set to true if your using chances system!" };

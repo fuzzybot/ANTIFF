@@ -1,10 +1,10 @@
 name: Anti-ForceField
 main: me.heirteir.antiff.Main
-version: 1.4.5
+version: 1.4
 author: Heirteir
 prefix: Anti-FF
 softdepend: [ProtocolLib]
-loadbefore: [ProtocolLib,Essentials]
+loadbefore: [ProtocolLib]
 description: Blocks Cheaters from using the cheat ForceField
 commands:
   antiff:

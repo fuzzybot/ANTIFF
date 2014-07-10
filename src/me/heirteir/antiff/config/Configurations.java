@@ -15,8 +15,11 @@ public class Configurations {
     private static boolean UPDATER;
     private static boolean SHOULD_UPDATE;
 
+    private static boolean BLOCK_SAFETY;
     private static int PLAYER_COOLDOWN;
+    private static int NPC_LIFE;
     private static int SPAWN_RATE;
+    private static String NPCNAME;
     private static int COMBAT_TIME;
 
     private static boolean KILL_PLAYER;
@@ -25,6 +28,9 @@ public class Configurations {
 
     private static int CHANCES;
     private static List<String> OUTOFCHANCES;
+
+    private static boolean USEANTILAG;
+    private static int TPSCOUNTER;
 
     private static boolean GENERATE_LOG;
 
@@ -37,8 +43,11 @@ public class Configurations {
 
 	REPORT_MESSAGE = ChatColor.translateAlternateColorCodes('&', config.getString("REPORT_MESSAGE"));
 
+	BLOCK_SAFETY = config.getBoolean("block-saftey");
 	PLAYER_COOLDOWN = config.getInt("playercooldown");
+	NPC_LIFE = config.getInt("npclife");
 	SPAWN_RATE = config.getInt("spawnrate");
+	NPCNAME = config.getString("npcname");
 	COMBAT_TIME = config.getInt("combattime");
 
 	KILL_PLAYER = config.getBoolean("killplayer");
@@ -48,7 +57,22 @@ public class Configurations {
 	CHANCES = config.getInt("chances");
 	OUTOFCHANCES = config.getStringList("outofchances");
 
+	USEANTILAG = config.getBoolean("use-antilag");
+	TPSCOUNTER = config.getInt("tps-counter");
+
 	GENERATE_LOG = config.getBoolean("generatelog");
+    }
+
+    public static boolean useAntiLag() {
+	return USEANTILAG;
+    }
+
+    public static int getTPSCounter() {
+	return TPSCOUNTER;
+    }
+
+    public static boolean blockSafety() {
+	return BLOCK_SAFETY;
     }
 
     public static boolean shouldUpdate() {
@@ -67,8 +91,16 @@ public class Configurations {
 	return PLAYER_COOLDOWN;
     }
 
+    public static int getNPC_LIFE() {
+	return NPC_LIFE;
+    }
+
     public static int getSPAWN_RATE() {
 	return SPAWN_RATE;
+    }
+
+    public static String getNPCNAME() {
+	return NPCNAME;
     }
 
     public static int getCOMBAT_TIME() {

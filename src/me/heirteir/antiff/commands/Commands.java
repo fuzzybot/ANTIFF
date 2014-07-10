@@ -21,15 +21,11 @@ public class Commands implements CommandExecutor {
 	    if (args.length == 0) {
 		help(sender);
 	    } else if (args[0].equalsIgnoreCase("disable")) {
-		if (sender.hasPermission("antiff.disable")) {
-		    Bukkit.getPluginManager().disablePlugin(main);
-		    sender.sendMessage(ChatColor.RED + "Anti-FF Disabled!");
-		}
+		Bukkit.getPluginManager().disablePlugin(main);
+		sender.sendMessage(ChatColor.RED + "Anti-FF Disabled!");
 	    } else if (args[0].equalsIgnoreCase("reload")) {
-		if (sender.hasPermission("antiff.reload")) {
-		    Configurations.reloadMessages(main);
-		    sender.sendMessage(ChatColor.GREEN + "Configuration reloaded (" + main.getDescription().getVersion() + ").");
-		}
+		Configurations.reloadMessages(main);
+		sender.sendMessage(ChatColor.GREEN + "Configuration reloaded (" + main.getDescription().getVersion() + ").");
 	    } else {
 		help(sender);
 	    }
