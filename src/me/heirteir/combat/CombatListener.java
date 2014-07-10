@@ -16,7 +16,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class CombatListener implements Listener {
-    // public Map<Player, Integer> time = new HashMap<Player, Integer>();
     public CopyOnWriteArrayList<String> time = new CopyOnWriteArrayList<String>();
     public ArrayList<Player> remove = new ArrayList<Player>();
 
