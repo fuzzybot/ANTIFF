@@ -14,11 +14,11 @@ public class Configurations {
 
     private static boolean UPDATER;
     private static boolean SHOULD_UPDATE;
+    private static boolean ANTILAG_PROCEDURES;
 
     private static int PLAYER_COOLDOWN;
     private static int SPAWN_RATE;
     private static int COMBAT_TIME;
-    private static boolean VANISH_NPC;
 
     private static boolean KILL_PLAYER;
     private static String REPORT;
@@ -35,13 +35,13 @@ public class Configurations {
 	FileConfiguration config = YamlConfiguration.loadConfiguration(file);
 	UPDATER = config.getBoolean("updater");
 	SHOULD_UPDATE = config.getBoolean("inform-update");
+	ANTILAG_PROCEDURES = config.getBoolean("antilag-procedures");
 
 	REPORT_MESSAGE = ChatColor.translateAlternateColorCodes('&', config.getString("REPORT_MESSAGE"));
 
 	PLAYER_COOLDOWN = config.getInt("playercooldown");
 	SPAWN_RATE = config.getInt("spawnrate");
 	COMBAT_TIME = config.getInt("combattime");
-	VANISH_NPC = config.getBoolean("vanishnpc");
 
 	KILL_PLAYER = config.getBoolean("killplayer");
 	REPORT = config.getString("report");
@@ -53,8 +53,8 @@ public class Configurations {
 	GENERATE_LOG = config.getBoolean("generatelog");
     }
 
-    public static boolean vanishNPC() {
-	return VANISH_NPC;
+    public static boolean allowAntiLag() {
+	return ANTILAG_PROCEDURES;
     }
 
     public static boolean shouldUpdate() {

@@ -35,8 +35,8 @@ public final class Updater {
 	    ID_KEY = "id", NAME_KEY = "name", DOWNLOAD_URL_KEY = "downloadUrl", ERROR_GETTING_ID = "There was an error checking for the project ID of this plugin",
 	    ERROR_GETTING_LATEST_FILE = "There was an error checking for the latest version of this plugin",
 	    ERROR_INVALID_FILE_NAME = "The file name listed on dev.bukkit.org is incorrect. The format should be 'PluginName v1.0' (got '%s' instead)",
-	    INFO_UPDATE_AVAILABLE = "There is a new update for Anti-ForceField come check it out it's probably AWESOME!", INFO_UPDATE_AVAILABLE_DL = "Download the latest version at %s", INFO_DOWNLOADING_FILE = "Downloading the latest version...",
-	    INFO_DOWNLOADED_FILE = "Finished downloading";
+	    INFO_UPDATE_AVAILABLE = "There is a new update for Anti-ForceField come check it out it's probably AWESOME!", INFO_UPDATE_AVAILABLE_DL = "Download the latest version at %s",
+	    INFO_DOWNLOADING_FILE = "Downloading the latest version...", INFO_DOWNLOADED_FILE = "Finished downloading";
 
     private final PluginDescriptionFile description;
     private final Logger logger;

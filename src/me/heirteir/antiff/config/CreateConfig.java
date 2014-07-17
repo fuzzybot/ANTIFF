@@ -71,6 +71,12 @@ public class CreateConfig {
 	else
 	    newConfig.set("inform-update", config.getBoolean("inform-update"), "tell you if there is an update or not.");
 
+	String[] antilagProcedures = { "Whether or not to initate anti-lag procedures", "These will disable unneeded events in", "plugins so your server doesn't lag", "when using the plugin." };
+	if (config.get("use-antilag") == null)
+	    newConfig.set("use-antilag", true, antilagProcedures);
+	else
+	    newConfig.set("use-antilag", config.get("use-antilag"), antilagProcedures);
+
 	if (config.get("REPORT_MESSAGE") == null)
 	    newConfig.set("REPORT_MESSAGE", "&f%player% &cwas kicked for hacking.", "Message sent when someone is cheating.");
 	else
@@ -92,12 +98,6 @@ public class CreateConfig {
 	    newConfig.set("combattime", 12, "How long to keep a player in the combat list. (in seconds)");
 	else
 	    newConfig.set("combattime", config.getInt("combattime"), "How long to keep a player in the combat list. (in seconds)");
-
-	String[] vanishNPC = { "whether or not to vanish the npc locally", "if this is enabled the npc will", "be vanished the the player it is spawned", "on but may lower detection rates." };
-	if (config.get("vanishnpc") == null)
-	    newConfig.set("vanishnpc", false, vanishNPC);
-	else
-	    newConfig.set("vanishnpc", config.getBoolean("vanishnpc"), vanishNPC);
 
 	String[] playeractions = { "Whether or not to kill the player" };
 
